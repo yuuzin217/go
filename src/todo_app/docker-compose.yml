@@ -1,0 +1,25 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - GO_ENV=development
+    volumes:
+      - db-data:/app/data
+      - ./app/views:/app/views
+
+  tester:
+    build: 
+      context: .
+      target: builder
+    volumes:
+      - .:/build
+    working_dir: /build
+    environment:
+      - CGO_ENABLED=1
+      - CGO_CFLAGS=-D_LARGEFILE64_SOURCE
+    command: go test -v ./... -cover
+
+volumes:
+  db-data:
